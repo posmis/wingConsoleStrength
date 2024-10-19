@@ -72,8 +72,7 @@ def main():
     const_data = extract_excel_to_map(file_path, sheet_name)
     calc_const_params(const_data)
     data = calc_iter(const_data, const_data['Epsilon'], 100000)
-    print(f"{const_data['Mx']} | {const_data['Epsilon']} | {data['yt']} | {const_data['sigma_kr']}")
-    print(data['sigmai'])
+    print(f"Mx: {const_data['Mx']} | Epsilon: {const_data['Epsilon']} | yt: {data['yt']}")
     print(data['fi'])
 
 
