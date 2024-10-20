@@ -1,6 +1,15 @@
+import sys
 import pandas as pd
 import math as mt
 import numpy as np
+from openpyxl import load_workbook
+
+def read_file_path():
+    if len(sys.argv) < 2:
+        print("Пожалуйста, укажите путь к Excel-файлу.")
+        sys.exit(1)
+    file_path = sys.argv[1]
+    return file_path
 
 # Получение исходных данных
 def extract_excel_to_map(file_path, sheet_name):
@@ -65,15 +74,19 @@ def calc_iter(const_data, tolerance=0.01, max_iterations=100):
 
     return data
 
+def results_output(const_data, data):
+    print(f"Mx: {const_data['Mx']} | Epsilon: {const_data['Epsilon']} | yt: {data['yt']}")
+    for index, value in enumerate(data['fi']):
+        print(f"Стрингер {index + 1:<{10}}| {value}")
+
 # Главная функция программы
 def main():
-    file_path = "data.xlsx"
+    file_path = read_file_path()
     sheet_name = "data"
     const_data = extract_excel_to_map(file_path, sheet_name)
     calc_const_params(const_data)
     data = calc_iter(const_data, const_data['Epsilon'], 100000)
-    print(f"Mx: {const_data['Mx']} | Epsilon: {const_data['Epsilon']} | yt: {data['yt']}")
-    print(data['fi'])
+    results_output(const_data, data)
 
 
 # Вызов основной функции
