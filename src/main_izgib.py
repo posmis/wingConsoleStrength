@@ -113,6 +113,22 @@ def calc_params_centr_z(const_data, data):
 
 def calc_params_kr(const_data, data):
     data['Mkr'] = const_data['Mz'] + const_data['Qy'] * data['x_z']
+    A = np.array([[data['a11'], data['a12'], -2 * const_data['w1']],
+                 [data['a21'], data['a22'], -2 * const_data['w2']],
+                 [2 * const_data['w1'], 2 * const_data['w2'], 0]] )
+    B = np.array([0, 0, data['Mkr']])
+    data['qI_kr'], data['qII_kr'], data['Kci'] = np.linalg.solve(A, B)
+
+    data['qi_kr'] = []
+    for i in range(0, 4):
+        data['qi_kr'].append(data['qi'][i] + data['qI_kr'])
+    for i in range(4, 15):
+        data['qi_kr'].append(data['qi'][i] + data['qII_kr'])
+    for i in range(15, 20):
+        data['qi_kr'].append(data['qi'][i] + data['qI_kr'])
+
+    data['tau_kr'] = np.array(data['qi_kr']) / const_data['delta']
+
 
 def results_output(const_data, data):
     print("|Расчет на изгиб|")
@@ -140,6 +156,12 @@ def results_output(const_data, data):
 
     print("|Расчет. Кручение|")
     print(f"Mkr: {data['Mkr']}")
+    print(f"qI_kr: {data['qI_kr']} | qII_kr: {data['qII_kr']} | Kci: {data['Kci']}")
+    for index, (value, value2) in enumerate(zip(data['qi_kr'], data['tau_kr'])):
+        if index < const_data['m_all'] - 1:
+            print(f"Панель {index + 2:<{10}}| {value} | {value2}")
+        else:
+            print(f"Панель {1:<{10}}| {value} | {value2}")
 
 
 # Главная функция программы
